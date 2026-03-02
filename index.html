@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AutoImport</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Raleway:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #f0eff5;
+  --bg2:       #e8e7f0;
+  --card:      #ffffff;
+  --card2:     #f7f6fc;
+  --border:    #e2e0ee;
+  --border2:   #d4d2e4;
+
+  --accent:    #6c5ce7;
+  --accent2:   #a29bfe;
+  --accent-g:  linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+  --btn-g:     linear-gradient(135deg, #6c5ce7 0%, #9b59b6 100%);
+  --btn-g2:    linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+  --btn-g3:    linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+  --hero-g:    linear-gradient(140deg, #4834d4 0%, #6c5ce7 50%, #a29bfe 100%);
+
+  --green:     #00b894;
+  --green-l:   #e8faf6;
+  --orange:    #e17055;
+  --orange-l:  #fdf0ec;
+
+  --text:      #1a1832;
+  --text2:     #6b6880;
+  --text3:     #b0adc4;
+
+  --radius:    18px;
+  --radius-sm: 12px;
+  --shadow:    0 2px 16px rgba(108,92,231,0.08);
+  --shadow-md: 0 6px 30px rgba(108,92,231,0.14);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: #dddbe8;
+  font-family: 'Nunito', sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px 16px;
+}
+
+/* ── Phone ── */
+.phone-wrap { width: 393px; max-width: 100%; }
+.phone-shell {
+  background: #1e1c2e;
+  border-radius: 54px; padding: 14px;
+  box-shadow: 0 0 0 1px #2e2b44, 0 50px 140px rgba(0,0,0,0.45), inset 0 0 0 1px #111;
+}
+.phone-top { display:flex; justify-content:center; margin-bottom:10px; }
+.phone-pill { width:110px; height:28px; background:#111; border-radius:20px; border:1px solid #2a2840; }
+.phone-screen { background:var(--bg); border-radius:40px; overflow:hidden; height:780px; position:relative; }
+
+/* ── TG Bar ── */
+.tg-bar {
+  background: var(--card);
+  padding: 12px 16px 10px;
+  display:flex; align-items:center; gap:10px;
+  border-bottom: 1px solid var(--border);
+  position:relative; z-index:10;
+}
+.tg-back { color:var(--accent); font-size:13px; font-weight:700; }
+.tg-title { color:var(--text); font-size:14px; font-weight:800; flex:1; text-align:center; letter-spacing:-0.2px; }
+.tg-action { color:var(--accent); font-size:13px; font-weight:700; min-width:40px; text-align:right; }
+
+/* ── App ── */
+.app { height:calc(100% - 47px); overflow:hidden; position:relative; }
+
+/* ── Screens ── */
+.screen {
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  width:100%;
+  overflow-y:auto; overflow-x:hidden;
+  opacity:0; pointer-events:none;
+  visibility:hidden;
+  scrollbar-width:none; background:var(--bg);
+  will-change:transform;
+}
+.screen::-webkit-scrollbar { display:none; }
+.screen.active { opacity:1; pointer-events:all; visibility:visible; }
+
+/* ── Progress ── */
+.prog-wrap { padding:10px 16px 0; }
+.prog-track { height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--accent-g); border-radius:2px; transition:width .4s ease; }
+
+/* ── Nav Header ── */
+.nav-header {
+  background:var(--card);
+  display:flex; align-items:center; gap:10px;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:10;
+}
+.back-btn {
+  width:34px; height:34px;
+  background:var(--card2); border:1px solid var(--border);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; color:var(--text2);
+  transition:all .15s; flex-shrink:0; user-select:none;
+}
+.back-btn:active { background:var(--border); transform:scale(.93); }
+.nav-title { font-size:15px; font-weight:800; color:var(--text); flex:1; letter-spacing:-.2px; }
+.nav-sub   { font-size:11px; color:var(--text3); margin-top:1px; }
+
+/* ── Buttons ── */
+.btn-main {
+  width:100%; border:none; border-radius:14px; padding:16px;
+  font-family:'Nunito',sans-serif; font-size:15px; font-weight:800;
+  cursor:pointer; transition:all .18s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  letter-spacing:-.1px; color:#fff;
+  background: var(--btn-g);
+  box-shadow: 0 4px 20px rgba(108,92,231,.35);
+}
+.btn-main:active { transform:scale(.98); box-shadow:0 2px 10px rgba(108,92,231,.25); }
+
+.btn-green {
+  background: var(--btn-g2);
+  box-shadow: 0 4px 20px rgba(0,184,148,.3);
+}
+.btn-green:active { box-shadow:0 2px 10px rgba(0,184,148,.2); }
+
+.btn-ghost {
+  width:100%; background:transparent; color:var(--accent);
+  border:2px solid var(--accent2); border-radius:14px; padding:14px;
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:700;
+  cursor:pointer; transition:all .18s;
+}
+.btn-ghost:active { background:rgba(108,92,231,.06); transform:scale(.98); }
+
+
+/* ════════════ S1 WELCOME ════════════ */
+#s-welcome { background:var(--bg); }
+
+.welcome-top { padding:28px 20px 0; }
+.logo-text {
+  font-family:'Raleway',sans-serif;
+  font-size:24px; font-weight:900; color:var(--text);
+  letter-spacing:-1px; margin-bottom:2px;
+}
+.logo-text span {
+  background:var(--accent-g); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text;
+}
+.logo-sub { font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:1.2px; margin-bottom:24px; }
+
+.hero-card {
+  margin:0 16px 20px;
+  background:var(--hero-g);
+  border-radius:24px; padding:28px 24px 24px;
+  position:relative; overflow:hidden;
+}
+.hero-card::before {
+  content:''; position:absolute;
+  width:220px; height:220px; border-radius:50%;
+  background:rgba(255,255,255,.06);
+  right:-60px; top:-60px;
+}
+.hero-card::after {
+  content:'🚗'; position:absolute;
+  right:-8px; bottom:-12px;
+  font-size:96px; opacity:.15;
+  transform:rotate(-8deg); pointer-events:none;
+}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.9);
+  font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:1px;
+  padding:4px 10px; border-radius:20px; margin-bottom:14px;
+}
+.hero-h {
+  font-family:'Raleway',sans-serif;
+  font-size:28px; font-weight:900; color:#fff;
+  line-height:1.1; letter-spacing:-0.5px; margin-bottom:8px;
+}
+.hero-h span { color:#d4c5ff; }
+.hero-p { font-size:13px; color:rgba(255,255,255,.72); line-height:1.55; margin-bottom:22px; }
+.hero-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  background:#fff; color:var(--accent);
+  font-family:'Nunito',sans-serif; font-size:13px; font-weight:800;
+  padding:11px 20px; border-radius:12px; border:none; cursor:pointer;
+  transition:all .18s; box-shadow:0 4px 16px rgba(0,0,0,.15);
+}
+.hero-btn:active { transform:scale(.97); opacity:.9; }
+
+.stats-row {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:8px; padding:0 16px; margin-bottom:22px;
+}
+.stat-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:12px 8px; text-align:center;
+  box-shadow:var(--shadow);
+}
+.stat-num {
+  font-family:'Raleway',sans-serif;
+  font-size:16px; font-weight:900; color:var(--text); margin-bottom:2px;
+  background:var(--accent-g); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text;
+}
+.stat-lbl { font-size:10px; color:var(--text3); font-weight:600; line-height:1.3; }
+
+/* ════════════ S-CONTACT ════════════ */
+#s-contact { background:var(--bg); }
+
+.contact-hero {
+  margin:16px 16px 0;
+  background:var(--hero-g);
+  border-radius:20px; padding:20px;
+  position:relative; overflow:hidden;
+}
+.contact-hero::after {
+  content:'📋'; position:absolute;
+  right:-8px; bottom:-8px;
+  font-size:72px; opacity:.12; pointer-events:none;
+}
+.contact-hero-title {
+  font-family:'Raleway',sans-serif;
+  font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;
+}
+.contact-hero-sub { font-size:12px; color:rgba(255,255,255,.72); font-weight:600; line-height:1.5; }
+
+.contact-pad { padding:14px 16px; display:flex; flex-direction:column; gap:12px; }
+
+.field-block {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+}
+.field-head {
+  padding:10px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.field-icon  { font-size:15px; }
+.field-label { font-size:13px; font-weight:800; color:var(--text); flex:1; }
+.field-req {
+  font-size:10px; font-weight:800; color:#fff;
+  background:var(--accent); padding:3px 8px;
+  border-radius:20px;
+}
+.field-opt-tag {
+  font-size:10px; font-weight:700; color:var(--text3);
+  background:var(--card2); padding:3px 8px;
+  border-radius:20px; border:1px solid var(--border);
+}
+.field-body { padding:12px 16px; }
+
+.text-input {
+  width:100%; background:var(--card2); border:1.5px solid var(--border);
+  border-radius:10px; padding:11px 14px;
+  font-size:14px; font-weight:600; color:var(--text);
+  font-family:'Nunito',sans-serif; outline:none; transition:border .18s;
+}
+.text-input::placeholder { color:var(--text3); font-weight:600; }
+.text-input:focus { border-color:var(--accent); }
+.text-input.error { border-color:#e17055; background:#fff8f6; }
+.field-hint { font-size:11px; color:var(--text3); margin-top:6px; font-weight:600; }
+.field-error { font-size:11px; color:var(--orange); margin-top:5px; font-weight:700; display:none; }
+
+.contact-cta { padding:4px 16px 8px; }
+.contact-hint { text-align:center; font-size:11px; color:var(--text3); font-weight:600; margin-top:8px; }
+
+.how-section { padding:0 16px 28px; }
+.sec-title {
+  font-size:12px; font-weight:800; color:var(--text2);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;
+}
+.steps { display:flex; flex-direction:column; gap:8px; }
+.step-item {
+  display:flex; align-items:center; gap:12px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:13px 14px;
+  box-shadow:var(--shadow);
+}
+.step-num {
+  width:28px; height:28px; flex-shrink:0;
+  background:var(--accent-g);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:900; color:#fff;
+}
+.step-txt { font-size:13px; color:var(--text); font-weight:600; }
+
+.welcome-cta { padding:0 16px 32px; }
+
+
+/* ════════════ S2 BRAND ════════════ */
+#s-brand { background:var(--bg); }
+
+.search-bar {
+  padding:12px 16px;
+  background:var(--card); border-bottom:1px solid var(--border);
+}
+.search-input {
+  width:100%; background:var(--card2); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 14px 10px 38px;
+  font-size:13px; color:var(--text); font-family:'Nunito',sans-serif;
+  outline:none; position:relative;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b0adc4' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:12px center;
+}
+.search-input::placeholder { color:var(--text3); }
+.search-input:focus { border-color:var(--accent2); }
+
+.ctabs {
+  display:flex; gap:6px; padding:12px 16px 0;
+  overflow-x:auto; scrollbar-width:none;
+}
+.ctabs::-webkit-scrollbar { display:none; }
+.ctab {
+  display:flex; align-items:center; gap:5px;
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:20px; padding:6px 12px;
+  font-size:12px; font-weight:700; color:var(--text2);
+  white-space:nowrap; cursor:pointer; transition:all .18s; flex-shrink:0;
+}
+.ctab.active { border-color:var(--accent); color:var(--accent); background:rgba(108,92,231,.08); }
+
+.brands-pad { padding:12px 16px 24px; }
+.brands-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+
+.brand-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--radius-sm); padding:16px 8px 12px;
+  text-align:center; cursor:pointer; transition:all .18s;
+  box-shadow:var(--shadow);
+}
+.brand-card:active { transform:scale(.95); border-color:var(--accent); }
+.brand-card:hover  { border-color:var(--accent2); background:rgba(108,92,231,.04); }
+.brand-emoji { font-size:28px; margin-bottom:6px; display:block; }
+.brand-name  { font-size:12px; font-weight:800; color:var(--text); }
+.brand-cnt   { font-size:10px; color:var(--text3); margin-top:2px; font-weight:600; }
+
+
+/* ════════════ S3 BODY TYPE ════════════ */
+#s-body { background:var(--bg); }
+
+.body-grid {
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:10px; padding:16px 16px 8px;
+}
+.body-card {
+  background:var(--card); border:2px solid var(--border);
+  border-radius:var(--radius); padding:22px 12px 16px;
+  text-align:center; cursor:pointer; transition:all .18s;
+  position:relative; box-shadow:var(--shadow);
+}
+.body-card:active { transform:scale(.97); }
+.body-card.sel { border-color:var(--accent); background:rgba(108,92,231,.05); box-shadow:0 4px 20px rgba(108,92,231,.15); }
+.chk {
+  position:absolute; top:8px; right:8px;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--btn-g); display:none;
+  align-items:center; justify-content:center;
+  font-size:10px; color:#fff; font-weight:900;
+  box-shadow:0 2px 8px rgba(108,92,231,.4);
+}
+.body-card.sel .chk { display:flex; }
+.body-icon { font-size:40px; margin-bottom:8px; display:block; }
+.body-name { font-size:13px; font-weight:800; color:var(--text); }
+.body-desc { font-size:10px; color:var(--text3); margin-top:3px; font-weight:600; }
+
+.skip-row { text-align:center; padding:8px 0 12px; font-size:13px; color:var(--accent); font-weight:700; cursor:pointer; }
+
+.body-next { padding:0 16px 8px; display:none; }
+
+
+/* ════════════ S4 MODEL ════════════ */
+#s-model { background:var(--bg); }
+
+.model-filters {
+  padding:10px 16px;
+  background:var(--card); border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; gap:8px;
+}
+.model-search {
+  width:100%; background:var(--card2); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 14px 10px 38px;
+  font-size:13px; color:var(--text); font-family:'Nunito',sans-serif;
+  outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b0adc4' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:12px center;
+}
+.model-search::placeholder { color:var(--text3); }
+.model-search:focus { border-color:var(--accent2); }
+
+.brand-scroll {
+  display:flex; gap:6px; overflow-x:auto; scrollbar-width:none;
+}
+.brand-scroll::-webkit-scrollbar { display:none; }
+.brand-pill {
+  display:flex; align-items:center; gap:4px;
+  background:var(--card2); border:1.5px solid var(--border);
+  border-radius:20px; padding:5px 10px;
+  font-size:11px; font-weight:700; color:var(--text2);
+  white-space:nowrap; cursor:pointer; transition:all .18s; flex-shrink:0;
+}
+.brand-pill.active { border-color:var(--accent); color:var(--accent); background:rgba(108,92,231,.08); }
+
+.models-pad { padding:12px 16px 24px; display:flex; flex-direction:column; gap:10px; }
+
+.model-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--radius); display:flex; align-items:center;
+  gap:10px; padding:12px 14px; cursor:pointer; transition:all .18s;
+  box-shadow:var(--shadow); width:100%; overflow:hidden;
+}
+.model-card:active { transform:scale(.98); border-color:var(--accent); box-shadow:0 4px 20px rgba(108,92,231,.15); }
+.model-thumb {
+  width:60px; height:46px; background:var(--card2); border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; flex-shrink:0; border:1px solid var(--border);
+}
+.m-info { flex:1; min-width:0; overflow:hidden; }
+.m-name { font-size:14px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-gen  { font-size:10px; color:var(--text3); margin-top:1px; margin-bottom:5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.m-badges { display:flex; gap:4px; flex-wrap:nowrap; overflow:hidden; }
+.badge {
+  font-size:10px; font-weight:700; padding:3px 7px; border-radius:7px; white-space:nowrap; flex-shrink:0;
+}
+.badge-pu { background:rgba(108,92,231,.1); color:var(--accent); }
+.badge-gr { background:var(--green-l); color:var(--green); }
+.badge-or { background:var(--orange-l); color:var(--orange); }
+.badge-gy { background:var(--card2); color:var(--text2); border:1px solid var(--border); }
+.m-right { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+.m-price { font-size:12px; font-weight:800; color:var(--accent); text-align:right; white-space:nowrap; }
+.m-price-lbl { font-size:10px; color:var(--text3); font-weight:600; white-space:nowrap; }
+.m-arrow { font-size:16px; color:var(--text3); flex-shrink:0; }
+
+
+/* ════════════ S5 PARAMS ════════════ */
+#s-params { background:var(--bg); }
+
+.sel-car-bar {
+  background:var(--card); border-bottom:1px solid var(--border);
+  padding:10px 16px; display:flex; align-items:center; gap:10px;
+}
+.sel-icon { font-size:24px; }
+.sel-name { font-size:13px; font-weight:800; color:var(--text); }
+.sel-sub  { font-size:11px; color:var(--text3); }
+.sel-change { margin-left:auto; font-size:11px; color:var(--accent); font-weight:700; cursor:pointer; }
+
+.params-pad { padding:14px 16px; display:flex; flex-direction:column; gap:12px; }
+
+.p-block {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+}
+.p-head {
+  padding:12px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.p-icon  { font-size:16px; }
+.p-title { font-size:13px; font-weight:800; color:var(--text); flex:1; }
+.p-opt-lbl {
+  font-size:10px; font-weight:700; color:var(--text3);
+  background:var(--card2); padding:3px 8px; border-radius:20px;
+  border:1px solid var(--border);
+}
+.p-body { padding:12px 16px; }
+
+.opts { display:flex; flex-wrap:wrap; gap:6px; }
+.opt {
+  background:var(--card2); border:1.5px solid var(--border);
+  border-radius:9px; padding:8px 13px;
+  font-size:12px; font-weight:700; color:var(--text2);
+  cursor:pointer; transition:all .15s; user-select:none;
+}
+.opt:active { transform:scale(.95); }
+.opt.sel {
+  background:rgba(108,92,231,.1); border-color:var(--accent);
+  color:var(--accent);
+}
+
+.year-row { display:flex; gap:8px; }
+.year-col { flex:1; }
+.year-lbl { font-size:10px; color:var(--text3); font-weight:700; margin-bottom:4px; }
+.year-sel {
+  width:100%; padding:10px 12px;
+  background:var(--card2); border:1.5px solid var(--border);
+  border-radius:10px; font-size:13px; font-weight:700;
+  color:var(--text); font-family:'Nunito',sans-serif;
+  outline:none; cursor:pointer;
+}
+.year-sel:focus { border-color:var(--accent); }
+
+.calc-cta { padding:4px 16px 8px; }
+.calc-hint { text-align:center; font-size:11px; color:var(--text3); font-weight:600; margin-top:8px; }
+
+
+/* ════════════ S6 CALC ════════════ */
+#s-calc { background:var(--bg); }
+
+.calc-car-card {
+  margin:16px 16px 0;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md);
+}
+.calc-top {
+  background:var(--hero-g); padding:20px;
+  display:flex; align-items:center; gap:14px;
+}
+.calc-em {
+  width:62px; height:62px; flex-shrink:0;
+  background:rgba(255,255,255,.15); border-radius:16px;
+  display:flex; align-items:center; justify-content:center; font-size:32px;
+}
+.calc-car-name {
+  font-family:'Raleway',sans-serif;
+  font-size:17px; font-weight:900; color:#fff; letter-spacing:-.3px;
+}
+.calc-car-spec { font-size:11px; color:rgba(255,255,255,.7); margin-top:4px; line-height:1.55; font-weight:600; }
+
+.calc-lines { padding:4px 0; }
+.calc-line {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:11px 16px; border-bottom:1px solid var(--border);
+  opacity:0; animation:fadeUp .35s ease forwards;
+}
+.calc-line:last-child { border-bottom:none; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.cl-lbl { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text2); font-weight:600; }
+.cl-ico { font-size:15px; }
+.cl-val { font-size:13px; font-weight:800; color:var(--text); }
+
+.total-card {
+  margin:12px 16px 10px;
+  background:var(--btn-g); border-radius:var(--radius);
+  padding:18px 20px; display:flex; justify-content:space-between; align-items:center;
+  box-shadow:0 6px 28px rgba(108,92,231,.35);
+}
+.total-lbl  { font-size:12px; color:rgba(255,255,255,.75); font-weight:700; }
+.total-sub  { font-size:10px; color:rgba(255,255,255,.5); margin-top:2px; font-weight:600; }
+.total-val  {
+  font-family:'Raleway',sans-serif;
+  font-size:24px; font-weight:900; color:#fff; letter-spacing:-.5px;
+}
+
+.disclaimer {
+  margin:0 16px 12px;
+  background:var(--orange-l); border:1px solid #fdd0bf;
+  border-radius:10px; padding:10px 12px;
+  font-size:11px; color:var(--orange); line-height:1.55; font-weight:600;
+}
+
+.action-pad { padding:0 16px 28px; display:flex; flex-direction:column; gap:8px; }
+
+
+/* ════════════ S7 SENT ════════════ */
+#s-sent { background:var(--bg); }
+
+.sent-top { padding:32px 20px 0; text-align:center; }
+.sent-icon {
+  width:80px; height:80px;
+  background:var(--green-l); border:2px solid #86efac;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; margin:0 auto 16px;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.sent-title {
+  font-family:'Raleway',sans-serif;
+  font-size:24px; font-weight:900; color:var(--text); margin-bottom:8px; letter-spacing:-.3px;
+}
+.sent-sub { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:24px; font-weight:600; }
+
+.mgr-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); margin:0 16px 12px;
+  padding:14px 16px; display:flex; align-items:center; gap:12px;
+  box-shadow:var(--shadow);
+}
+.mgr-av {
+  width:46px; height:46px;
+  background:var(--btn-g); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+}
+.mgr-name { font-size:14px; font-weight:800; color:var(--text); }
+.mgr-role { font-size:11px; color:var(--text3); margin-top:2px; font-weight:600; }
+.mgr-online { margin-left:auto; display:flex; align-items:center; gap:5px; font-size:11px; color:var(--green); font-weight:700; }
+.dot-green { width:7px; height:7px; background:var(--green); border-radius:50%; box-shadow:0 0 6px rgba(0,184,148,.5); }
+
+.sent-summary {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); margin:0 16px 16px; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.sum-head {
+  padding:10px 16px; border-bottom:1px solid var(--border);
+  font-size:11px; font-weight:800; color:var(--text2);
+  text-transform:uppercase; letter-spacing:.8px;
+}
+.sum-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 16px; border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.sum-row:last-child { border-bottom:none; }
+.sum-lbl { color:var(--text2); font-weight:600; }
+.sum-val { font-weight:800; color:var(--text); }
+.sum-val.accent { color:var(--accent); }
+
+.new-pad { padding:0 16px 32px; }
+
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+  <div class="phone-shell">
+    <div class="phone-top"><div class="phone-pill"></div></div>
+    <div class="phone-screen">
+
+      <div class="tg-bar">
+        <span class="tg-back">◀ Назад</span>
+        <span class="tg-title">AutoImport</span>
+        <span class="tg-action"></span>
+      </div>
+
+      <div class="app">
+
+        <!-- ════ S1 WELCOME ════ -->
+        <div class="screen active" id="s-welcome">
+          <div class="welcome-top">
+            <div class="logo-text">AUTO<span>IMPORT</span></div>
+            <div class="logo-sub">Авто из Азии под ключ</div>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-tag">🔥 Корея · Китай · Япония</div>
+            <div class="hero-h">Пригоним<br><span>твой автомобиль</span></div>
+            <div class="hero-p">Подбор, выкуп на аукционе, таможня и доставка до вашего города — всё включено</div>
+            <button class="hero-btn" onclick="goTo('s-brand')">Начать подбор →</button>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-num">500+</div>
+              <div class="stat-lbl">авто привезено</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">📸</div>
+              <div class="stat-lbl">фото с аукциона</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">📍</div>
+              <div class="stat-lbl">трекинг груза</div>
+            </div>
+          </div>
+
+          <div class="how-section">
+            <div class="sec-title">Как это работает</div>
+            <div class="steps">
+              <div class="step-item"><div class="step-num">1</div><div class="step-txt">Выберите марку, модель и параметры</div></div>
+              <div class="step-item"><div class="step-num">2</div><div class="step-txt">Получите расчёт стоимости под ключ</div></div>
+              <div class="step-item"><div class="step-num">3</div><div class="step-txt">Менеджер свяжется и подберёт варианты</div></div>
+            </div>
+          </div>
+
+          <div class="welcome-cta">
+            <button class="btn-main" onclick="goTo('s-brand')">🚗 Перейти к подбору</button>
+          </div>
+        </div>
+
+        <!-- ════ S2 BRAND ════ -->
+        <div class="screen" id="s-brand">
+          <div class="nav-header">
+            <div class="back-btn" onclick="goBack('s-welcome')">←</div>
+            <div><div class="nav-title">Выберите марку</div><div class="nav-sub">Шаг 1 из 4</div></div>
+          </div>
+          <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:20%"></div></div></div>
+
+          <div class="search-bar">
+            <input class="search-input" placeholder="Поиск марки..." oninput="filterBrands(this.value)">
+          </div>
+
+          <div class="ctabs">
+            <div class="ctab active" onclick="ctabSwitch(this,'all')">🌏 Все</div>
+            <div class="ctab" onclick="ctabSwitch(this,'kr')">🇰🇷 Корея</div>
+            <div class="ctab" onclick="ctabSwitch(this,'cn')">🇨🇳 Китай</div>
+            <div class="ctab" onclick="ctabSwitch(this,'jp')">🇯🇵 Япония</div>
+            <div class="ctab" onclick="ctabSwitch(this,'eu')">🇩🇪 Европа</div>
+          </div>
+
+          <div class="brands-pad">
+            <div class="brands-grid" id="brands-grid">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ════ S3 BODY ════ -->
+        <div class="screen" id="s-body">
+          <div class="nav-header">
+            <div class="back-btn" onclick="goBack('s-brand')">←</div>
+            <div><div class="nav-title">Тип кузова</div><div class="nav-sub">Шаг 2 из 4</div></div>
+          </div>
+          <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:40%"></div></div></div>
+
+          <div class="body-grid">
+            <div class="body-card" onclick="selBody(this,'SUV')"><div class="chk">✓</div><span class="body-icon">🚙</span><div class="body-name">SUV / Кроссовер</div><div class="body-desc">Высокий клиренс</div></div>
+            <div class="body-card" onclick="selBody(this,'Седан')"><div class="chk">✓</div><span class="body-icon">🚗</span><div class="body-name">Седан</div><div class="body-desc">Классический</div></div>
+            <div class="body-card" onclick="selBody(this,'Хэтчбек')"><div class="chk">✓</div><span class="body-icon">🚕</span><div class="body-name">Хэтчбек</div><div class="body-desc">Компактный</div></div>
+            <div class="body-card" onclick="selBody(this,'Минивэн')"><div class="chk">✓</div><span class="body-icon">🚌</span><div class="body-name">Минивэн</div><div class="body-desc">Для семьи</div></div>
+            <div class="body-card" onclick="selBody(this,'Купе')"><div class="chk">✓</div><span class="body-icon">🏎️</span><div class="body-name">Купе</div><div class="body-desc">Спортивный</div></div>
+            <div class="body-card" onclick="selBody(this,'Пикап')"><div class="chk">✓</div><span class="body-icon">🛻</span><div class="body-name">Пикап</div><div class="body-desc">Грузовой</div></div>
+          </div>
+          <div class="body-next" id="body-next"><button class="btn-main" onclick="goTo('s-model')">Выбрать модель →</button></div>
+          <div class="skip-row" onclick="goTo('s-model')">Пропустить →</div>
+          <div style="height:16px"></div>
+        </div>
+
+        <!-- ════ S4 MODEL ════ -->
+        <div class="screen" id="s-model">
+          <div class="nav-header">
+            <div class="back-btn" onclick="goBack('s-body')">←</div>
+            <div><div class="nav-title" id="model-screen-title">Выберите модель</div><div class="nav-sub">Шаг 3 из 4</div></div>
+          </div>
+          <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:60%"></div></div></div>
+
+          <div class="model-filters">
+            <input class="model-search" id="model-search" placeholder="Поиск модели..." oninput="filterModels(this.value)">
+            <div class="brand-scroll" id="brand-pills">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+
+          <div class="models-pad" id="models-pad">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+
+        <!-- ════ S5 PARAMS ════ -->
+        <div class="screen" id="s-params">
+          <div class="nav-header">
+            <div class="back-btn" onclick="goBack('s-model')">←</div>
+            <div><div class="nav-title">Параметры</div><div class="nav-sub">Шаг 4 из 4 · всё необязательно</div></div>
+          </div>
+          <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:80%"></div></div></div>
+
+          <div class="sel-car-bar">
+            <span class="sel-icon">🚙</span>
+            <div><div class="sel-name" id="sel-car-name">—</div><div class="sel-sub">Выбранный автомобиль</div></div>
+            <span class="sel-change" onclick="goTo('s-model')">Изменить</span>
+          </div>
+
+          <div class="params-pad">
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">📅</span><span class="p-title">Год выпуска</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body">
+                <div class="year-row">
+                  <div class="year-col"><div class="year-lbl">ОТ</div>
+                    <select class="year-sel" id="yr-from">
+                      <option value="">Любой</option>
+                      <option>2018</option><option>2019</option><option>2020</option>
+                      <option selected>2021</option><option>2022</option><option>2023</option><option>2024</option>
+                    </select>
+                  </div>
+                  <div class="year-col"><div class="year-lbl">ДО</div>
+                    <select class="year-sel" id="yr-to">
+                      <option value="">Любой</option>
+                      <option>2018</option><option>2019</option><option>2020</option>
+                      <option>2021</option><option>2022</option><option selected>2023</option><option>2024</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">⛽</span><span class="p-title">Тип двигателя</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body"><div class="opts">
+                <div class="opt" onclick="togOpt(this,'fuel')">Бензин</div>
+                <div class="opt" onclick="togOpt(this,'fuel')">Дизель</div>
+                <div class="opt" onclick="togOpt(this,'fuel')">Гибрид</div>
+                <div class="opt" onclick="togOpt(this,'fuel')">Электро</div>
+              </div></div>
+            </div>
+
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">🔧</span><span class="p-title">Объём двигателя</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body"><div class="opts">
+                <div class="opt" onclick="togOpt(this,'eng')">1.4</div>
+                <div class="opt" onclick="togOpt(this,'eng')">1.6</div>
+                <div class="opt" onclick="togOpt(this,'eng')">2.0</div>
+                <div class="opt" onclick="togOpt(this,'eng')">2.4</div>
+                <div class="opt" onclick="togOpt(this,'eng')">2.5</div>
+                <div class="opt" onclick="togOpt(this,'eng')">2.5T</div>
+                <div class="opt" onclick="togOpt(this,'eng')">3.5</div>
+              </div></div>
+            </div>
+
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">🐎</span><span class="p-title">Мощность (л.с.)</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body"><div class="opts">
+                <div class="opt" onclick="togOpt(this,'hp')">до 100</div>
+                <div class="opt" onclick="togOpt(this,'hp')">100–150</div>
+                <div class="opt" onclick="togOpt(this,'hp')">150–200</div>
+                <div class="opt" onclick="togOpt(this,'hp')">200–250</div>
+                <div class="opt" onclick="togOpt(this,'hp')">250–300</div>
+                <div class="opt" onclick="togOpt(this,'hp')">300+</div>
+              </div></div>
+            </div>
+
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">⚙️</span><span class="p-title">Коробка передач</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body"><div class="opts">
+                <div class="opt" onclick="togOpt(this,'tr')">Автомат</div>
+                <div class="opt" onclick="togOpt(this,'tr')">Механика</div>
+                <div class="opt" onclick="togOpt(this,'tr')">Вариатор</div>
+                <div class="opt" onclick="togOpt(this,'tr')">Робот</div>
+              </div></div>
+            </div>
+
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">🛞</span><span class="p-title">Привод</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body"><div class="opts">
+                <div class="opt" onclick="togOpt(this,'dr')">FWD — передний</div>
+                <div class="opt" onclick="togOpt(this,'dr')">RWD — задний</div>
+                <div class="opt" onclick="togOpt(this,'dr')">AWD — полный</div>
+              </div></div>
+            </div>
+
+            <div class="p-block">
+              <div class="p-head"><span class="p-icon">📍</span><span class="p-title">Пробег</span><span class="p-opt-lbl">необязательно</span></div>
+              <div class="p-body"><div class="opts">
+                <div class="opt" onclick="togOpt(this,'ml')">до 30 тыс</div>
+                <div class="opt" onclick="togOpt(this,'ml')">до 60 тыс</div>
+                <div class="opt" onclick="togOpt(this,'ml')">до 100 тыс</div>
+                <div class="opt" onclick="togOpt(this,'ml')">Любой</div>
+              </div></div>
+            </div>
+          </div>
+
+          <div class="calc-cta">
+            <button class="btn-main btn-green" onclick="goTo('s-calc')">🧮 Рассчитать стоимость</button>
+            <div class="calc-hint">Можно нажать даже без выбора параметров</div>
+          </div>
+          <div style="height:24px"></div>
+        </div>
+
+        <!-- ════ S6 CALC ════ -->
+        <div class="screen" id="s-calc">
+          <div class="nav-header">
+            <div class="back-btn" onclick="goBack('s-params')">←</div>
+            <div><div class="nav-title">Расчёт стоимости</div><div class="nav-sub">Предварительный</div></div>
+          </div>
+
+          <div class="calc-car-card">
+            <div class="calc-top">
+              <div class="calc-em">🚙</div>
+              <div>
+                <div class="calc-car-name" id="calc-name">Hyundai Tucson 2.0</div>
+                <div class="calc-car-spec">AWD · Автомат · Бензин<br>2021–2023 · до 60 тыс. км</div>
+              </div>
+            </div>
+            <div class="calc-lines">
+              <div class="calc-line" style="animation-delay:.05s"><span class="cl-lbl"><span class="cl-ico">🇰🇷</span>Цена на аукционе</span><span class="cl-val">1 450 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.10s"><span class="cl-lbl"><span class="cl-ico">🚢</span>Доставка</span><span class="cl-val">85 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.15s"><span class="cl-lbl"><span class="cl-ico">🏛️</span>Таможенная пошлина</span><span class="cl-val">462 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.20s"><span class="cl-lbl"><span class="cl-ico">♻️</span>Утилизационный сбор</span><span class="cl-val">324 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.25s"><span class="cl-lbl"><span class="cl-ico">📋</span>Брокер + оформление</span><span class="cl-val">65 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.30s"><span class="cl-lbl"><span class="cl-ico">📄</span>СБКТС / ЭПТС</span><span class="cl-val">35 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.35s"><span class="cl-lbl"><span class="cl-ico">🏢</span>Комиссия компании</span><span class="cl-val">150 000 ₽</span></div>
+            </div>
+          </div>
+
+          <div class="total-card">
+            <div><div class="total-lbl">ИТОГО ПОД КЛЮЧ</div><div class="total-sub">приблизительная стоимость</div></div>
+            <div class="total-val">2 571 000 ₽</div>
+          </div>
+
+          <div class="disclaimer">⚠️ Расчёт предварительный. Точная цена зависит от конкретного лота. Менеджер уточнит актуальные варианты.</div>
+
+          <div class="action-pad">
+            <button class="btn-main" onclick="goTo('s-contact')">💬 Написать менеджеру</button>
+            <button class="btn-ghost" onclick="goBack('s-params')">← Изменить параметры</button>
+          </div>
+        </div>
+
+        <!-- ════ S-CONTACT ════ -->
+        <div class="screen" id="s-contact">
+          <div class="nav-header">
+            <div class="back-btn" onclick="goBack('s-calc')">←</div>
+            <div><div class="nav-title">Контактные данные</div><div class="nav-sub">Менеджер свяжется с вами</div></div>
+          </div>
+
+          <div class="contact-hero">
+            <div class="contact-hero-title">Почти готово! 🎉</div>
+            <div class="contact-hero-sub">Оставьте контакты — менеджер получит вашу заявку со всеми параметрами и свяжется в течение 15 минут</div>
+          </div>
+
+          <div class="contact-pad">
+
+            <div class="field-block">
+              <div class="field-head">
+                <span class="field-icon">👤</span>
+                <span class="field-label">Ваше имя</span>
+                <span class="field-req">обязательно</span>
+              </div>
+              <div class="field-body">
+                <input class="text-input" id="inp-name" type="text" placeholder="Как вас зовут?" oninput="clearErr('name')">
+                <div class="field-error" id="err-name">Пожалуйста, введите ваше имя</div>
+              </div>
+            </div>
+
+            <div class="field-block">
+              <div class="field-head">
+                <span class="field-icon">📱</span>
+                <span class="field-label">Номер телефона</span>
+                <span class="field-opt-tag">необязательно</span>
+              </div>
+              <div class="field-body">
+                <input class="text-input" id="inp-phone" type="tel" placeholder="+7 (___) ___-__-__" oninput="formatPhone(this)">
+                <div class="field-hint">Для быстрой связи по звонку или WhatsApp</div>
+              </div>
+            </div>
+
+            <div class="field-block">
+              <div class="field-head">
+                <span class="field-icon">✉️</span>
+                <span class="field-label">Email</span>
+                <span class="field-opt-tag">необязательно</span>
+              </div>
+              <div class="field-body">
+                <input class="text-input" id="inp-email" type="email" placeholder="your@email.com">
+                <div class="field-hint">Пришлём подборку лотов на почту</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="contact-cta">
+            <button class="btn-main" onclick="submitContact()">
+              ✅ Отправить заявку менеджеру
+            </button>
+            <div class="contact-hint">Нажимая кнопку, вы соглашаетесь на обработку данных</div>
+          </div>
+          <div style="height:24px"></div>
+        </div>
+
+        <!-- ════ S7 SENT ════ -->
+        <div class="screen" id="s-sent">
+          <div class="nav-header" style="border-bottom:none;">
+            <div style="width:34px"></div>
+            <div class="nav-title" style="text-align:center;">Заявка отправлена</div>
+            <div style="width:34px"></div>
+          </div>
+
+          <div class="sent-top">
+            <div class="sent-icon">✅</div>
+            <div class="sent-title">Заявка принята!</div>
+            <div class="sent-sub">Менеджер получил все детали и свяжется с вами в течение 15 минут</div>
+          </div>
+
+          <div class="mgr-card">
+            <div class="mgr-av">👨‍💼</div>
+            <div><div class="mgr-name">Алексей Петров</div><div class="mgr-role">Менеджер по Корее и Японии</div></div>
+            <div class="mgr-online"><div class="dot-green"></div>онлайн</div>
+          </div>
+
+          <div class="sent-summary">
+            <div class="sum-head">Что получил менеджер</div>
+            <div class="sum-row"><span class="sum-lbl">Клиент</span><span class="sum-val" id="sum-client-name">—</span></div>
+            <div class="sum-row"><span class="sum-lbl">Автомобиль</span><span class="sum-val" id="sum-car">—</span></div>
+            <div class="sum-row"><span class="sum-lbl">Год / Пробег</span><span class="sum-val">2021–2023 / до 60 тыс</span></div>
+            <div class="sum-row"><span class="sum-lbl">Двигатель</span><span class="sum-val">Бензин · Автомат</span></div>
+            <div class="sum-row"><span class="sum-lbl">Мощность</span><span class="sum-val">150–200 л.с.</span></div>
+            <div class="sum-row"><span class="sum-lbl">Привод</span><span class="sum-val">AWD</span></div>
+            <div class="sum-row"><span class="sum-lbl">Расчёт</span><span class="sum-val accent">~2 571 000 ₽</span></div>
+          </div>
+
+          <div class="new-pad">
+            <button class="btn-main" onclick="resetAll()">🔍 Новый подбор</button>
+          </div>
+        </div>
+
+      </div><!-- /app -->
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Data ── */
+const BRANDS = [
+  { id:'hyundai', name:'Hyundai', emoji:'🚗', country:'kr', models:['Tucson','Sonata','Elantra','IONIQ 6','Palisade','Santa Fe','Creta'] },
+  { id:'kia',     name:'Kia',     emoji:'🚙', country:'kr', models:['Sportage','K5','Cerato','EV6','Sorento','Carnival','Stinger'] },
+  { id:'genesis', name:'Genesis', emoji:'🏅', country:'kr', models:['GV80','GV70','G80','GV60','G70'] },
+  { id:'byd',     name:'BYD',     emoji:'⚡', country:'cn', models:['Seal','Atto 3','Han','Tang','Song Plus','Dolphin'] },
+  { id:'zeekr',   name:'Zeekr',   emoji:'🔋', country:'cn', models:['001','009','X'] },
+  { id:'chery',   name:'Chery',   emoji:'🚘', country:'cn', models:['Tiggo 8 Pro','Tiggo 7 Pro','Arrizo 8','Omoda 5'] },
+  { id:'toyota',  name:'Toyota',  emoji:'🚐', country:'jp', models:['Camry','RAV4','Land Cruiser','Highlander','Corolla'] },
+  { id:'lexus',   name:'Lexus',   emoji:'🏎️', country:'jp', models:['RX','NX','ES','LX','GX'] },
+  { id:'honda',   name:'Honda',   emoji:'🏁', country:'jp', models:['CR-V','Accord','Pilot','HR-V','Civic'] },
+  { id:'bmw',     name:'BMW',     emoji:'🚀', country:'eu', models:['X5','X3','5 Series','3 Series','X7'] },
+  { id:'mercedes',name:'Mercedes',emoji:'⭐', country:'eu', models:['GLE','E-Class','C-Class','GLC','S-Class'] },
+];
+
+const MODEL_META = {
+  'Tucson':     { gen:'4 поколение (NX4) · 2021–2024', badges:[['Рест. 2024','pu'],['SUV','gy']],            price:'от 2.8 млн', emoji:'🚙' },
+  'Sonata':     { gen:'8 поколение (DN8) · 2020–2024', badges:[['🔥 Топ','or'],['Седан','gy']],              price:'от 2.1 млн', emoji:'🚗' },
+  'Elantra':    { gen:'7 поколение (CN7) · 2021–2024', badges:[['N-Line','pu'],['Седан','gy']],              price:'от 1.9 млн', emoji:'🏎️' },
+  'IONIQ 6':    { gen:'1 поколение (CE) · 2022–2024',  badges:[['Электро','gr']],                           price:'от 3.4 млн', emoji:'⚡' },
+  'Palisade':   { gen:'1 поколение (LX2) · 2019–2024', badges:[['7 мест','pu'],['SUV','gy']],                price:'от 3.2 млн', emoji:'🚐' },
+  'Santa Fe':   { gen:'4 поколение (TM) · 2019–2024',  badges:[['SUV','gy'],['Гибрид','gr']],               price:'от 3.0 млн', emoji:'🚙' },
+  'Creta':      { gen:'2 поколение · 2021–2024',       badges:[['Хит','or']],                               price:'от 1.8 млн', emoji:'🚗' },
+  'Sportage':   { gen:'5 поколение (NQ5) · 2021–2024', badges:[['Рест. 2024','pu'],['SUV','gy']],            price:'от 2.6 млн', emoji:'🚙' },
+  'K5':         { gen:'3 поколение (DL3) · 2020–2024', badges:[['Топ продаж','or']],                        price:'от 2.2 млн', emoji:'🚗' },
+  'EV6':        { gen:'1 поколение (CV) · 2021–2024',  badges:[['Электро','gr'],['GT Line','pu']],          price:'от 3.5 млн', emoji:'⚡' },
+  'GV80':       { gen:'1 поколение · 2020–2024',       badges:[['Люкс','pu']],                              price:'от 5.8 млн', emoji:'🏅' },
+  'GV70':       { gen:'1 поколение · 2021–2024',       badges:[['Электро','gr'],['Люкс','pu']],             price:'от 4.2 млн', emoji:'🏅' },
+  'Seal':       { gen:'1 поколение · 2022–2024',       badges:[['Электро','gr'],['🔥 Хит','or']],           price:'от 3.1 млн', emoji:'⚡' },
+  'Atto 3':     { gen:'1 поколение · 2021–2024',       badges:[['Электро','gr']],                           price:'от 2.4 млн', emoji:'🔋' },
+  'Tiggo 8 Pro':{ gen:'1 поколение · 2021–2024',       badges:[['7 мест','pu'],['SUV','gy']],               price:'от 2.9 млн', emoji:'🚘' },
+  'Camry':      { gen:'8 поколение (XV70) · 2018–2024',badges:[['Классика','pu']],                          price:'от 2.8 млн', emoji:'🚗' },
+  'RAV4':       { gen:'5 поколение (XA50) · 2019–2024',badges:[['Гибрид','gr'],['SUV','gy']],               price:'от 3.2 млн', emoji:'🚙' },
+};
+
+function getDefaultMeta(name) {
+  return { gen:'—', badges:[['Авто','gy']], price:'по запросу', emoji:'🚗' };
+}
+
+let state = { brand:null, bodyType:null, model:null, modelEmoji:'🚙' };
+let currentCountry = 'all';
+let currentBrandFilter = null;
+
+/* ── Navigation ── */
+let _navLock = false;
+
+function goTo(id) {
+  if (_navLock) return;
+  const cur = document.querySelector('.screen.active');
+  if (!cur || cur.id === id) return;
+  _navLock = true;
+
+  const nxt = document.getElementById(id);
+
+  // Make next visible but translated right, no transition yet
+  nxt.style.transition = 'none';
+  nxt.style.transform = 'translateX(100%)';
+  nxt.style.opacity = '1';
+  nxt.style.visibility = 'visible';
+  nxt.style.pointerEvents = 'none';
+  nxt.scrollTop = 0;
+
+  // Force layout recalc so next screen gets correct width before animating
+  void nxt.offsetWidth;
+
+  // Now animate both screens
+  requestAnimationFrame(() => {
+    cur.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s ease';
+    cur.style.transform = 'translateX(-25%)';
+    cur.style.opacity = '0';
+
+    nxt.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)';
+    nxt.style.transform = 'translateX(0)';
+
+    setTimeout(() => {
+      // Reset current screen
+      cur.classList.remove('active');
+      cur.style.cssText = '';
+
+      // Clean up next screen
+      nxt.style.transition = '';
+      nxt.style.transform = '';
+      nxt.style.opacity = '';
+      nxt.style.visibility = '';
+      nxt.style.pointerEvents = '';
+      nxt.classList.add('active');
+
+      _navLock = false;
+    }, 310);
+  });
+}
+
+function goBack(id) {
+  if (_navLock) return;
+  const cur = document.querySelector('.screen.active');
+  if (!cur || cur.id === id) return;
+  _navLock = true;
+
+  const prev = document.getElementById(id);
+
+  // Make prev visible but translated left, no transition
+  prev.style.transition = 'none';
+  prev.style.transform = 'translateX(-25%)';
+  prev.style.opacity = '0';
+  prev.style.visibility = 'visible';
+  prev.style.pointerEvents = 'none';
+  prev.scrollTop = 0;
+
+  void prev.offsetWidth;
+
+  requestAnimationFrame(() => {
+    cur.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s ease';
+    cur.style.transform = 'translateX(100%)';
+    cur.style.opacity = '0';
+
+    prev.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s ease';
+    prev.style.transform = 'translateX(0)';
+    prev.style.opacity = '1';
+
+    setTimeout(() => {
+      cur.classList.remove('active');
+      cur.style.cssText = '';
+
+      prev.style.transition = '';
+      prev.style.transform = '';
+      prev.style.opacity = '';
+      prev.style.visibility = '';
+      prev.style.pointerEvents = '';
+      prev.classList.add('active');
+
+      _navLock = false;
+    }, 310);
+  });
+}
+
+/* ── Brands ── */
+function renderBrands(filter, country) {
+  const grid = document.getElementById('brands-grid');
+  const list = BRANDS.filter(b =>
+    (country === 'all' || b.country === country) &&
+    (!filter || b.name.toLowerCase().includes(filter.toLowerCase()))
+  );
+  grid.innerHTML = list.map(b => `
+    <div class="brand-card" onclick="pickBrand('${b.id}')">
+      <span class="brand-emoji">${b.emoji}</span>
+      <div class="brand-name">${b.name}</div>
+      <div class="brand-cnt">${b.models.length} моделей</div>
+    </div>`).join('');
+}
+/* ── Init ── */
+renderBrands('', 'all');
+
+function pickBrand(id) {
+  state.brand = BRANDS.find(b => b.id === id);
+  currentBrandFilter = id;
+  renderBrandPills();
+  renderModels('', id);
+  document.getElementById('model-screen-title').textContent = 'Модели ' + state.brand.name;
+  goTo('s-body');
+}
+
+function filterBrands(val) { renderBrands(val, currentCountry); }
+function ctabSwitch(el, country) {
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active'); currentCountry = country;
+  renderBrands(document.querySelector('.search-input').value, country);
+}
+
+/* ── Brand pills on model screen ── */
+function renderBrandPills() {
+  const wrap = document.getElementById('brand-pills');
+  wrap.innerHTML = BRANDS.map(b => `
+    <div class="brand-pill ${b.id === currentBrandFilter ? 'active' : ''}"
+      onclick="switchBrandFilter('${b.id}', this)">
+      ${b.emoji} ${b.name}
+    </div>`).join('');
+  // scroll active pill into view
+  setTimeout(() => {
+    const active = wrap.querySelector('.active');
+    if (active) active.scrollIntoView({inline:'center', behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+
+function switchBrandFilter(id, el) {
+  document.querySelectorAll('.brand-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentBrandFilter = id;
+  state.brand = BRANDS.find(b => b.id === id);
+  document.getElementById('model-screen-title').textContent = 'Модели ' + state.brand.name;
+  document.getElementById('model-search').value = '';
+  renderModels('', id);
+}
+
+/* ── Models ── */
+function renderModels(search, brandId) {
+  const brand = BRANDS.find(b => b.id === brandId) || state.brand;
+  if (!brand) return;
+  const pad = document.getElementById('models-pad');
+  const models = brand.models.filter(m => !search || m.toLowerCase().includes(search.toLowerCase()));
+  pad.innerHTML = models.map(name => {
+    const meta = MODEL_META[name] || getDefaultMeta(name);
+    const badges = meta.badges.map(([txt, cls]) => `<span class="badge badge-${cls}">${txt}</span>`).join('');
+    return `
+    <div class="model-card" onclick="pickModel('${name}','${meta.emoji}')">
+      <div class="model-thumb">${meta.emoji}</div>
+      <div class="m-info">
+        <div class="m-name">${name}</div>
+        <div class="m-gen">${meta.gen}</div>
+        <div class="m-badges">${badges}</div>
+      </div>
+      <div class="m-right">
+        <div style="text-align:right;">
+          <div class="m-price">${meta.price}</div>
+          <div class="m-price-lbl">под ключ</div>
+        </div>
+        <span class="m-arrow">›</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function pickModel(name, emoji) {
+  state.model = name; state.modelEmoji = emoji;
+  const label = (state.brand ? state.brand.name + ' ' : '') + name;
+  document.getElementById('sel-car-name').textContent = label;
+  document.getElementById('calc-name').textContent = label;
+  document.getElementById('sum-car').textContent = label;
+  goTo('s-params');
+}
+
+function filterModels(val) { renderModels(val, currentBrandFilter); }
+
+/* ── Body ── */
+function selBody(el, type) {
+  document.querySelectorAll('.body-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel'); state.bodyType = type;
+  document.getElementById('body-next').style.display = 'block';
+}
+
+/* ── Params ── */
+function togOpt(el, group) {
+  el.closest('.opts').querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+/* ── Contact form ── */
+function submitContact() {
+  const name = document.getElementById('inp-name').value.trim();
+  if (!name) {
+    document.getElementById('inp-name').classList.add('error');
+    document.getElementById('err-name').style.display = 'block';
+    document.getElementById('inp-name').focus();
+    return;
+  }
+  goTo('s-sent');
+  // populate summary name
+  const nameEl = document.getElementById('sum-client-name');
+  if (nameEl) nameEl.textContent = name;
+}
+
+function clearErr(field) {
+  if (field === 'name') {
+    document.getElementById('inp-name').classList.remove('error');
+    document.getElementById('err-name').style.display = 'none';
+  }
+}
+
+function formatPhone(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.startsWith('8')) v = '7' + v.slice(1);
+  if (v.startsWith('7') && v.length > 1) {
+    let r = '+7';
+    if (v.length > 1) r += ' (' + v.slice(1,4);
+    if (v.length >= 4) r += ') ' + v.slice(4,7);
+    if (v.length >= 7) r += '-' + v.slice(7,9);
+    if (v.length >= 9) r += '-' + v.slice(9,11);
+    input.value = r;
+  }
+}
+
+function resetAll() {
+  state = { brand:null, bodyType:null, model:null, modelEmoji:'🚙' };
+  currentBrandFilter = null; currentCountry = 'all';
+  document.querySelectorAll('.body-card').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-email').value = '';
+  document.getElementById('inp-name').classList.remove('error');
+  document.getElementById('err-name').style.display = 'none';
+  document.getElementById('body-next').style.display = 'none';
+  document.querySelector('.search-input').value = '';
+  renderBrands('','all');
+  document.querySelectorAll('.ctab').forEach((t,i) => t.classList.toggle('active', i===0));
+  // reset all screens, activate welcome
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.cssText = '';
+  });
+  document.getElementById('s-welcome').classList.add('active');
+  document.getElementById('s-welcome').scrollTop = 0;
+  _navLock = false;
+}
+</script>
+</body>
+</html>
