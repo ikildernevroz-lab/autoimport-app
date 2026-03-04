@@ -967,43 +967,52 @@ body {
 </div><!-- /app -->
 
 <script>
-/* ── Data ── */
-const BRANDS = [
-  { id:'hyundai', name:'Hyundai', emoji:'🚗', country:'kr', models:['Tucson','Sonata','Elantra','IONIQ 6','Palisade','Santa Fe','Creta'] },
-  { id:'kia',     name:'Kia',     emoji:'🚙', country:'kr', models:['Sportage','K5','Cerato','EV6','Sorento','Carnival','Stinger'] },
-  { id:'genesis', name:'Genesis', emoji:'🏅', country:'kr', models:['GV80','GV70','G80','GV60','G70'] },
-  { id:'byd',     name:'BYD',     emoji:'⚡', country:'cn', models:['Seal','Atto 3','Han','Tang','Song Plus','Dolphin'] },
-  { id:'zeekr',   name:'Zeekr',   emoji:'🔋', country:'cn', models:['001','009','X'] },
-  { id:'chery',   name:'Chery',   emoji:'🚘', country:'cn', models:['Tiggo 8 Pro','Tiggo 7 Pro','Arrizo 8','Omoda 5'] },
-  { id:'toyota',  name:'Toyota',  emoji:'🚐', country:'jp', models:['Camry','RAV4','Land Cruiser','Highlander','Corolla'] },
-  { id:'lexus',   name:'Lexus',   emoji:'🏎️', country:'jp', models:['RX','NX','ES','LX','GX'] },
-  { id:'honda',   name:'Honda',   emoji:'🏁', country:'jp', models:['CR-V','Accord','Pilot','HR-V','Civic'] },
-  { id:'bmw',     name:'BMW',     emoji:'🚀', country:'eu', models:['X5','X3','5 Series','3 Series','X7'] },
-  { id:'mercedes',name:'Mercedes',emoji:'⭐', country:'eu', models:['GLE','E-Class','C-Class','GLC','S-Class'] },
-];
+/* ── API Config ── */
+const API_URL = 'https://thriving-fulfillment-production.up.railway.app';
+const TENANT_ID = 1;
 
-const MODEL_META = {
-  'Tucson':     { gen:'4 поколение (NX4) · 2021–2024', badges:[['Рест. 2024','pu'],['SUV','gy']],            price:'от 2.8 млн', emoji:'🚙' },
-  'Sonata':     { gen:'8 поколение (DN8) · 2020–2024', badges:[['🔥 Топ','or'],['Седан','gy']],              price:'от 2.1 млн', emoji:'🚗' },
-  'Elantra':    { gen:'7 поколение (CN7) · 2021–2024', badges:[['N-Line','pu'],['Седан','gy']],              price:'от 1.9 млн', emoji:'🏎️' },
-  'IONIQ 6':    { gen:'1 поколение (CE) · 2022–2024',  badges:[['Электро','gr']],                           price:'от 3.4 млн', emoji:'⚡' },
-  'Palisade':   { gen:'1 поколение (LX2) · 2019–2024', badges:[['7 мест','pu'],['SUV','gy']],                price:'от 3.2 млн', emoji:'🚐' },
-  'Santa Fe':   { gen:'4 поколение (TM) · 2019–2024',  badges:[['SUV','gy'],['Гибрид','gr']],               price:'от 3.0 млн', emoji:'🚙' },
-  'Creta':      { gen:'2 поколение · 2021–2024',       badges:[['Хит','or']],                               price:'от 1.8 млн', emoji:'🚗' },
-  'Sportage':   { gen:'5 поколение (NQ5) · 2021–2024', badges:[['Рест. 2024','pu'],['SUV','gy']],            price:'от 2.6 млн', emoji:'🚙' },
-  'K5':         { gen:'3 поколение (DL3) · 2020–2024', badges:[['Топ продаж','or']],                        price:'от 2.2 млн', emoji:'🚗' },
-  'EV6':        { gen:'1 поколение (CV) · 2021–2024',  badges:[['Электро','gr'],['GT Line','pu']],          price:'от 3.5 млн', emoji:'⚡' },
-  'GV80':       { gen:'1 поколение · 2020–2024',       badges:[['Люкс','pu']],                              price:'от 5.8 млн', emoji:'🏅' },
-  'GV70':       { gen:'1 поколение · 2021–2024',       badges:[['Электро','gr'],['Люкс','pu']],             price:'от 4.2 млн', emoji:'🏅' },
-  'Seal':       { gen:'1 поколение · 2022–2024',       badges:[['Электро','gr'],['🔥 Хит','or']],           price:'от 3.1 млн', emoji:'⚡' },
-  'Atto 3':     { gen:'1 поколение · 2021–2024',       badges:[['Электро','gr']],                           price:'от 2.4 млн', emoji:'🔋' },
-  'Tiggo 8 Pro':{ gen:'1 поколение · 2021–2024',       badges:[['7 мест','pu'],['SUV','gy']],               price:'от 2.9 млн', emoji:'🚘' },
-  'Camry':      { gen:'8 поколение (XV70) · 2018–2024',badges:[['Классика','pu']],                          price:'от 2.8 млн', emoji:'🚗' },
-  'RAV4':       { gen:'5 поколение (XA50) · 2019–2024',badges:[['Гибрид','gr'],['SUV','gy']],               price:'от 3.2 млн', emoji:'🚙' },
-};
+// Кэш данных из API
+let BRANDS = [];
+let MODELS_CACHE = {}; // { brandName: [model, ...] }
 
 function getDefaultMeta(name) {
   return { gen:'—', badges:[['Авто','gy']], price:'по запросу', emoji:'🚗' };
+}
+
+// Загружаем марки из API
+async function loadBrands(country) {
+  try {
+    const url = country && country !== 'all'
+      ? `${API_URL}/api/cars/brands?country=${country}`
+      : `${API_URL}/api/cars/brands`;
+    const res = await fetch(url);
+    const data = await res.json();
+    BRANDS = data.brands.map(b => ({
+      id: b.brand.toLowerCase().replace(/\s+/g, '-'),
+      name: b.brand,
+      emoji: b.emoji,
+      country: b.country,
+      modelCount: b.modelCount
+    }));
+    return BRANDS;
+  } catch(e) {
+    console.error('Ошибка загрузки марок:', e);
+    return [];
+  }
+}
+
+// Загружаем модели марки из API
+async function loadModels(brandName) {
+  if (MODELS_CACHE[brandName]) return MODELS_CACHE[brandName];
+  try {
+    const res = await fetch(`${API_URL}/api/cars/models?brand=${encodeURIComponent(brandName)}`);
+    const data = await res.json();
+    MODELS_CACHE[brandName] = data.models;
+    return data.models;
+  } catch(e) {
+    console.error('Ошибка загрузки моделей:', e);
+    return [];
+  }
 }
 
 let state = { brand:null, bodyType:null, model:null, modelEmoji:'🚙' };
@@ -1103,17 +1112,22 @@ function goBack(id) {
 }
 
 /* ── Brands ── */
-function renderBrands(filter, country) {
+async function renderBrands(filter, country) {
   const grid = document.getElementById('brands-grid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text3)">Загрузка...</div>';
+  await loadBrands(country);
   const list = BRANDS.filter(b =>
-    (country === 'all' || b.country === country) &&
     (!filter || b.name.toLowerCase().includes(filter.toLowerCase()))
   );
+  if (list.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text3)">Ничего не найдено</div>';
+    return;
+  }
   grid.innerHTML = list.map(b => `
-    <div class="brand-card" onclick="pickBrand('${b.id}')">
+    <div class="brand-card" onclick="pickBrand('${b.id}','${b.name}','${b.emoji}','${b.country}')">
       <span class="brand-emoji">${b.emoji}</span>
       <div class="brand-name">${b.name}</div>
-      <div class="brand-cnt">${b.models.length} моделей</div>
+      <div class="brand-cnt">${b.modelCount} моделей</div>
     </div>`).join('');
 }
 /* ── Telegram Web App Init ── */
@@ -1125,12 +1139,12 @@ if (window.Telegram && window.Telegram.WebApp) {
 /* ── Init ── */
 renderBrands('', 'all');
 
-function pickBrand(id) {
-  state.brand = BRANDS.find(b => b.id === id);
+function pickBrand(id, name, emoji, country) {
+  state.brand = { id, name, emoji, country };
   currentBrandFilter = id;
   renderBrandPills();
-  renderModels('', id);
-  document.getElementById('model-screen-title').textContent = 'Модели ' + state.brand.name;
+  renderModels('', id, name);
+  document.getElementById('model-screen-title').textContent = 'Модели ' + name;
   goTo('s-body');
 }
 
@@ -1138,6 +1152,7 @@ function filterBrands(val) { renderBrands(val, currentCountry); }
 function ctabSwitch(el, country) {
   document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
   el.classList.add('active'); currentCountry = country;
+  BRANDS = []; // сбрасываем кэш при смене страны
   renderBrands(document.querySelector('.search-input').value, country);
 }
 
@@ -1146,46 +1161,54 @@ function renderBrandPills() {
   const wrap = document.getElementById('brand-pills');
   wrap.innerHTML = BRANDS.map(b => `
     <div class="brand-pill ${b.id === currentBrandFilter ? 'active' : ''}"
-      onclick="switchBrandFilter('${b.id}', this)">
+      onclick="switchBrandFilter('${b.id}','${b.name}','${b.emoji}','${b.country}', this)">
       ${b.emoji} ${b.name}
     </div>`).join('');
-  // scroll active pill into view
   setTimeout(() => {
     const active = wrap.querySelector('.active');
     if (active) active.scrollIntoView({inline:'center', behavior:'smooth', block:'nearest'});
   }, 100);
 }
 
-function switchBrandFilter(id, el) {
+function switchBrandFilter(id, name, emoji, country, el) {
   document.querySelectorAll('.brand-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   currentBrandFilter = id;
-  state.brand = BRANDS.find(b => b.id === id);
-  document.getElementById('model-screen-title').textContent = 'Модели ' + state.brand.name;
+  state.brand = { id, name, emoji, country };
+  document.getElementById('model-screen-title').textContent = 'Модели ' + name;
   document.getElementById('model-search').value = '';
-  renderModels('', id);
+  renderModels('', id, name);
 }
 
 /* ── Models ── */
-function renderModels(search, brandId) {
-  const brand = BRANDS.find(b => b.id === brandId) || state.brand;
-  if (!brand) return;
+async function renderModels(search, brandId, brandName) {
+  const name = brandName || (state.brand ? state.brand.name : null);
+  if (!name) return;
   const pad = document.getElementById('models-pad');
-  const models = brand.models.filter(m => !search || m.toLowerCase().includes(search.toLowerCase()));
-  pad.innerHTML = models.map(name => {
-    const meta = MODEL_META[name] || getDefaultMeta(name);
-    const badges = meta.badges.map(([txt, cls]) => `<span class="badge badge-${cls}">${txt}</span>`).join('');
+  pad.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3)">Загрузка...</div>';
+  const models = await loadModels(name);
+  const filtered = models.filter(m => !search || m.model.toLowerCase().includes(search.toLowerCase()));
+  if (filtered.length === 0) {
+    pad.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3)">Ничего не найдено</div>';
+    return;
+  }
+  pad.innerHTML = filtered.map(m => {
+    const badges = m.badges ? JSON.parse(typeof m.badges === 'string' ? m.badges : JSON.stringify(m.badges))
+      .map(([txt, cls]) => `<span class="badge badge-${cls}">${txt}</span>`).join('') : '';
+    const price = m.basePrice ? 'от ' + Math.round(m.basePrice / 1000000 * 10) / 10 + ' млн' : 'по запросу';
+    const gen = m.generation || '—';
+    const emoji = m.emoji || '🚗';
     return `
-    <div class="model-card" onclick="pickModel('${name}','${meta.emoji}')">
-      <div class="model-thumb">${meta.emoji}</div>
+    <div class="model-card" onclick="pickModel('${m.model}','${emoji}')">
+      <div class="model-thumb">${emoji}</div>
       <div class="m-info">
-        <div class="m-name">${name}</div>
-        <div class="m-gen">${meta.gen}</div>
+        <div class="m-name">${m.model}</div>
+        <div class="m-gen">${gen}</div>
         <div class="m-badges">${badges}</div>
       </div>
       <div class="m-right">
         <div style="text-align:right;">
-          <div class="m-price">${meta.price}</div>
+          <div class="m-price">${price}</div>
           <div class="m-price-lbl">под ключ</div>
         </div>
         <span class="m-arrow">›</span>
@@ -1203,7 +1226,7 @@ function pickModel(name, emoji) {
   goTo('s-params');
 }
 
-function filterModels(val) { renderModels(val, currentBrandFilter); }
+function filterModels(val) { renderModels(val, currentBrandFilter, state.brand ? state.brand.name : null); }
 
 /* ── Body ── */
 function selBody(el, type) {
@@ -1265,7 +1288,7 @@ function resetAll() {
   document.getElementById('err-name').style.display = 'none';
   document.getElementById('body-next').style.display = 'none';
   document.querySelector('.search-input').value = '';
-  renderBrands('','all');
+  BRANDS = []; MODELS_CACHE = {}; renderBrands('','all');
   document.querySelectorAll('.ctab').forEach((t,i) => t.classList.toggle('active', i===0));
   // reset all screens, activate welcome
   document.querySelectorAll('.screen').forEach(s => {
