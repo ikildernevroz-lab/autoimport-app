@@ -741,15 +741,45 @@ body {
                   <div class="year-col"><div class="year-lbl">ОТ</div>
                     <select class="year-sel" id="yr-from">
                       <option value="">Любой</option>
-                      <option>2018</option><option>2019</option><option>2020</option>
-                      <option selected>2021</option><option>2022</option><option>2023</option><option>2024</option>
+                      <option>2010</option>
+                      <option>2011</option>
+                      <option>2012</option>
+                      <option>2013</option>
+                      <option>2014</option>
+                      <option>2015</option>
+                      <option>2016</option>
+                      <option>2017</option>
+                      <option>2018</option>
+                      <option>2019</option>
+                      <option>2020</option>
+                      <option>2021</option>
+                      <option>2022</option>
+                      <option>2023</option>
+                      <option>2024</option>
+                      <option>2025</option>
+                      <option>2026</option>
                     </select>
                   </div>
                   <div class="year-col"><div class="year-lbl">ДО</div>
                     <select class="year-sel" id="yr-to">
                       <option value="">Любой</option>
-                      <option>2018</option><option>2019</option><option>2020</option>
-                      <option>2021</option><option>2022</option><option selected>2023</option><option>2024</option>
+                      <option>2010</option>
+                      <option>2011</option>
+                      <option>2012</option>
+                      <option>2013</option>
+                      <option>2014</option>
+                      <option>2015</option>
+                      <option>2016</option>
+                      <option>2017</option>
+                      <option>2018</option>
+                      <option>2019</option>
+                      <option>2020</option>
+                      <option>2021</option>
+                      <option>2022</option>
+                      <option>2023</option>
+                      <option>2024</option>
+                      <option>2025</option>
+                      <option>2026</option>
                     </select>
                   </div>
                 </div>
@@ -822,7 +852,7 @@ body {
           </div>
 
           <div class="calc-cta">
-            <button class="btn-main btn-green" onclick="goTo('s-calc')">🧮 Рассчитать стоимость</button>
+            <button class="btn-main btn-green" onclick="doCalc()">🧮 Рассчитать стоимость</button>
             <div class="calc-hint">Можно нажать даже без выбора параметров</div>
           </div>
           <div style="height:24px"></div>
@@ -840,23 +870,23 @@ body {
               <div class="calc-em">🚙</div>
               <div>
                 <div class="calc-car-name" id="calc-name">Hyundai Tucson 2.0</div>
-                <div class="calc-car-spec">AWD · Автомат · Бензин<br>2021–2023 · до 60 тыс. км</div>
+                <div class="calc-car-spec" id="calc-spec">—</div>
               </div>
             </div>
             <div class="calc-lines">
-              <div class="calc-line" style="animation-delay:.05s"><span class="cl-lbl"><span class="cl-ico">🇰🇷</span>Цена на аукционе</span><span class="cl-val">1 450 000 ₽</span></div>
-              <div class="calc-line" style="animation-delay:.10s"><span class="cl-lbl"><span class="cl-ico">🚢</span>Доставка</span><span class="cl-val">85 000 ₽</span></div>
-              <div class="calc-line" style="animation-delay:.15s"><span class="cl-lbl"><span class="cl-ico">🏛️</span>Таможенная пошлина</span><span class="cl-val">462 000 ₽</span></div>
-              <div class="calc-line" style="animation-delay:.20s"><span class="cl-lbl"><span class="cl-ico">♻️</span>Утилизационный сбор</span><span class="cl-val">324 000 ₽</span></div>
-              <div class="calc-line" style="animation-delay:.25s"><span class="cl-lbl"><span class="cl-ico">📋</span>Брокер + оформление</span><span class="cl-val">65 000 ₽</span></div>
-              <div class="calc-line" style="animation-delay:.30s"><span class="cl-lbl"><span class="cl-ico">📄</span>СБКТС / ЭПТС</span><span class="cl-val">35 000 ₽</span></div>
-              <div class="calc-line" style="animation-delay:.35s"><span class="cl-lbl"><span class="cl-ico">🏢</span>Комиссия компании</span><span class="cl-val">150 000 ₽</span></div>
+              <div class="calc-line" style="animation-delay:.05s"><span class="cl-lbl"><span class="cl-ico" id="cl-flag">🇰🇷</span>Цена на аукционе</span><span class="cl-val" id="cl-price">—</span></div>
+              <div class="calc-line" style="animation-delay:.10s"><span class="cl-lbl"><span class="cl-ico">🚢</span>Доставка</span><span class="cl-val" id="cl-ship">—</span></div>
+              <div class="calc-line" style="animation-delay:.15s"><span class="cl-lbl"><span class="cl-ico">🏛️</span>Таможенная пошлина</span><span class="cl-val" id="cl-duty">—</span></div>
+              <div class="calc-line" style="animation-delay:.20s"><span class="cl-lbl"><span class="cl-ico">♻️</span>Утилизационный сбор</span><span class="cl-val" id="cl-util">—</span></div>
+              <div class="calc-line" style="animation-delay:.25s"><span class="cl-lbl"><span class="cl-ico">📋</span>Брокер + оформление</span><span class="cl-val" id="cl-broker">—</span></div>
+              <div class="calc-line" style="animation-delay:.30s"><span class="cl-lbl"><span class="cl-ico">📄</span>СБКТС / ЭПТС</span><span class="cl-val" id="cl-sbrk">—</span></div>
+              <div class="calc-line" style="animation-delay:.35s"><span class="cl-lbl"><span class="cl-ico">🏢</span>Комиссия компании</span><span class="cl-val" id="cl-comm">—</span></div>
             </div>
           </div>
 
           <div class="total-card">
             <div><div class="total-lbl">ИТОГО ПОД КЛЮЧ</div><div class="total-sub">приблизительная стоимость</div></div>
-            <div class="total-val">2 571 000 ₽</div>
+            <div class="total-val" id="cl-total">—</div>
           </div>
 
           <div class="disclaimer">⚠️ Расчёт предварительный. Точная цена зависит от конкретного лота. Менеджер уточнит актуальные варианты.</div>
@@ -1236,22 +1266,250 @@ function selBody(el, type) {
 }
 
 /* ── Params ── */
+const params = { fuel:null, engine:null, hp:null, transmission:null, drive:null, mileage:null, yearFrom:null, yearTo:null };
+
 function togOpt(el, group) {
   el.closest('.opts').querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
   el.classList.add('sel');
+  params[group] = el.textContent.trim();
+}
+
+/* ── Calculator Engine ── */
+
+// Курс USD/RUB и EUR/RUB — тянем с ЦБ
+let USD_RATE = 90;  // fallback 2026
+let EUR_RATE = 105; // нужен для пошлины (ставки ФТС в EUR)
+
+async function fetchRates() {
+  try {
+    const res = await fetch('https://www.cbr-xml-daily.ru/daily_json.js');
+    const data = await res.json();
+    USD_RATE = data.Valute.USD.Value;
+    EUR_RATE = data.Valute.EUR.Value;
+    console.log('💵 USD:', USD_RATE, '💶 EUR:', EUR_RATE);
+  } catch(e) {
+    try {
+      const res2 = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json');
+      const data2 = await res2.json();
+      USD_RATE = data2.usd.rub;
+      EUR_RATE = data2.usd.rub * 1.08; // EUR ~8% выше USD
+      console.log('💵 USD (alt):', USD_RATE);
+    } catch(e2) {
+      console.warn('Курс не получен, используем USD=90, EUR=105');
+    }
+  }
+}
+fetchRates();
+
+// Таможенная пошлина для физлиц (ставки ФТС)
+function calcDuty(priceUsd, engineCC, ageYears) {
+  // Конвертируем цену в EUR для расчёта процентной части (требование ФТС)
+  const priceEur = priceUsd * USD_RATE / EUR_RATE;
+  let eurPerCC = 0;
+  let percentRate = 0;
+
+  if (ageYears < 3) {
+    // до 3 лет — процент от стоимости, но не меньше ставки за см³
+    percentRate = 0.48;
+    if (engineCC <= 1000)      eurPerCC = 2.5;
+    else if (engineCC <= 1500) eurPerCC = 3.5;
+    else if (engineCC <= 1800) eurPerCC = 5.0;
+    else if (engineCC <= 2300) eurPerCC = 7.5;
+    else if (engineCC <= 3000) eurPerCC = 7.5;
+    else                       eurPerCC = 15.0;
+    if (engineCC <= 1000) percentRate = 0.54;
+
+    const byPercent = priceEur * percentRate;
+    const byCC = eurPerCC * engineCC;
+    return Math.max(byPercent, byCC) * EUR_RATE;
+
+  } else if (ageYears <= 5) {
+    // 3–5 лет — только ставка за см³
+    if (engineCC <= 1000)      eurPerCC = 1.5;
+    else if (engineCC <= 1500) eurPerCC = 1.7;
+    else if (engineCC <= 1800) eurPerCC = 2.5;
+    else if (engineCC <= 2300) eurPerCC = 2.7;
+    else if (engineCC <= 3000) eurPerCC = 3.0;
+    else                       eurPerCC = 3.6;
+    return eurPerCC * engineCC * EUR_RATE;
+
+  } else {
+    // старше 5 лет
+    if (engineCC <= 1000)      eurPerCC = 3.0;
+    else if (engineCC <= 1500) eurPerCC = 3.2;
+    else if (engineCC <= 1800) eurPerCC = 3.5;
+    else if (engineCC <= 2300) eurPerCC = 4.8;
+    else if (engineCC <= 3000) eurPerCC = 5.0;
+    else                       eurPerCC = 5.7;
+    return eurPerCC * engineCC * EUR_RATE;
+  }
+}
+
+// Утилизационный сбор (физлицо, не старше 3 лет / старше)
+function calcUtil(engineCC, ageYears) {
+  const BASE = 20000;
+  // Коэффициенты для физлиц 2024
+  if (ageYears < 3) {
+    if (engineCC <= 1000)      return BASE * 6.57;   // ~131 400
+    else if (engineCC <= 2000) return BASE * 18.26;  // ~365 200
+    else if (engineCC <= 3000) return BASE * 36.89;  // ~737 800
+    else                       return BASE * 55.37;  // ~1 107 400
+  } else {
+    if (engineCC <= 1000)      return BASE * 6.57;
+    else if (engineCC <= 2000) return BASE * 24.01;  // ~480 200
+    else if (engineCC <= 3000) return BASE * 48.50;
+    else                       return BASE * 71.26;
+  }
+}
+
+// Доставка по стране происхождения
+function calcShipping(country) {
+  const rates = { kr: 95000, cn: 80000, jp: 110000, eu: 250000 };
+  return rates[country] || 95000;
+}
+
+// Парсим объём двигателя из строки "2.0" → 2000 см³
+function parseEngine(engStr) {
+  if (!engStr) return 2000;
+  const n = parseFloat(engStr.replace('T','').replace('L',''));
+  return isNaN(n) ? 2000 : Math.round(n * 1000);
+}
+
+// Парсим год выпуска
+function parseYear(yearStr) {
+  if (!yearStr) return new Date().getFullYear() - 2;
+  return parseInt(yearStr) || new Date().getFullYear() - 2;
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('ru-RU') + ' ₽';
+}
+
+async function doCalc() {
+  // Собираем параметры
+  const engineCC  = parseEngine(params.engine);
+  const yrFrom    = document.getElementById('yr-from').value;
+  const yrTo      = document.getElementById('yr-to').value;
+  params.yearFrom = yrFrom || null;
+  params.yearTo   = yrTo   || null;
+  const yearFrom  = parseYear(yrFrom);
+  const ageYears  = new Date().getFullYear() - yearFrom;
+  const country   = state.brand ? state.brand.country : 'kr';
+
+  // Получаем базовую цену из базы если есть, иначе дефолт
+  let basePriceRub = 1450000;
+  if (state.model && MODELS_CACHE[state.brand?.name]) {
+    const m = MODELS_CACHE[state.brand.name].find(x => x.model === state.model);
+    if (m && m.basePrice) basePriceRub = m.basePrice;
+  }
+  // Пересчитываем через $ (аукционная цена)
+  const basePriceUsd = basePriceRub / USD_RATE;
+  const basePrice    = Math.round(basePriceUsd) * USD_RATE; // показываем в рублях
+
+  const shipping   = calcShipping(country);
+  const duty       = params.fuel === 'Электро' ? 0 : calcDuty(basePriceUsd, engineCC, ageYears);
+  const util       = params.fuel === 'Электро' ? 3400 * 20000 / 1000 : calcUtil(engineCC, ageYears);
+  const broker     = 65000;
+  const sbrk       = 35000;
+  const commission = 150000;
+  const total      = basePrice + shipping + duty + util + broker + sbrk + commission;
+
+  // Флаг страны
+  const flags = { kr:'🇰🇷', cn:'🇨🇳', jp:'🇯🇵', eu:'🇪🇺' };
+  document.getElementById('cl-flag').textContent = flags[country] || '🌍';
+
+  // Заполняем строки
+  const usdStr = '$' + Math.round(basePriceUsd).toLocaleString('ru-RU');
+  document.getElementById('cl-price').textContent  = fmt(basePrice) + ' (' + usdStr + ')';
+  document.getElementById('cl-ship').textContent   = fmt(shipping);
+  document.getElementById('cl-duty').textContent   = params.fuel === 'Электро' ? '0 ₽ (льгота)' : fmt(duty);
+  document.getElementById('cl-util').textContent   = fmt(util);
+  document.getElementById('cl-broker').textContent = fmt(broker);
+  document.getElementById('cl-sbrk').textContent   = fmt(sbrk);
+  document.getElementById('cl-comm').textContent   = fmt(commission);
+  document.getElementById('cl-total').textContent  = fmt(total);
+
+  // Спецификация авто
+  const specParts = [
+    params.fuel, params.engine ? params.engine + ' л' : null,
+    params.transmission, params.drive
+  ].filter(Boolean);
+  document.getElementById('calc-spec').innerHTML =
+    (specParts.length ? specParts.join(' · ') + '<br>' : '') +
+    (params.yearFrom ? params.yearFrom + (params.yearTo ? '–' + params.yearTo : '') : '') +
+    (params.mileage ? ' · ' + params.mileage : '');
+
+  // Сохраняем для заявки
+  state.totalPrice = fmt(total);
+  state.calcResult = { basePrice, shipping, duty, util, broker, sbrk, commission, total };
+
+  goTo('s-calc');
 }
 
 /* ── Contact form ── */
-function submitContact() {
-  const name = document.getElementById('inp-name').value.trim();
+async function submitContact() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+
   if (!name) {
     document.getElementById('inp-name').classList.add('error');
     document.getElementById('err-name').style.display = 'block';
     document.getElementById('inp-name').focus();
     return;
   }
+
+  // Сохраняем заявку в API
+  try {
+    const tg = window.Telegram?.WebApp;
+    await fetch(`${API_URL}/api/applications`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tenantId:     TENANT_ID,
+        clientName:   name,
+        clientPhone:  phone || null,
+        clientEmail:  email || null,
+        telegramId:   tg?.initDataUnsafe?.user?.id || null,
+        telegramUser: tg?.initDataUnsafe?.user?.username || null,
+        brand:        state.brand?.name || '',
+        model:        state.model || '',
+        yearFrom:     params.yearFrom,
+        yearTo:       params.yearTo,
+        fuel:         params.fuel,
+        engine:       params.engine,
+        hp:           params.hp,
+        transmission: params.transmission,
+        drive:        params.drive,
+        mileage:      params.mileage,
+        totalPrice:   state.totalPrice || '—',
+      })
+    });
+  } catch(e) {
+    console.warn('Ошибка сохранения заявки:', e);
+  }
+
+  // Также отправляем данные боту если открыто в Telegram
+  if (window.Telegram?.WebApp?.sendData) {
+    try {
+      Telegram.WebApp.sendData(JSON.stringify({
+        name, phone, email,
+        brand:        state.brand?.name || '',
+        model:        state.model || '',
+        yearFrom:     params.yearFrom,
+        yearTo:       params.yearTo,
+        fuel:         params.fuel,
+        engine:       params.engine,
+        hp:           params.hp,
+        transmission: params.transmission,
+        drive:        params.drive,
+        mileage:      params.mileage,
+        totalPrice:   state.totalPrice || '—',
+      }));
+    } catch(e) { /* не в Telegram */ }
+  }
+
   goTo('s-sent');
-  // populate summary name
   const nameEl = document.getElementById('sum-client-name');
   if (nameEl) nameEl.textContent = name;
 }
